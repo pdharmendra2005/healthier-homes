@@ -1,0 +1,24 @@
+@(title: String)(content: Html)(implicit request: RequestHeader)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@title - Healthier Homes</title>
+  <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <a class="brand" href="@routes.DashboardController.index(None)">Healthier Homes</a>
+    <nav aria-label="Main">
+      <a href="@routes.DashboardController.index(None)">Officer dashboard</a>
+      <a href="@routes.ReportController.form">Report a problem</a>
+    </nav>
+  </header>
+  <main id="main" class="container">
+    @content
+  </main>
+  <footer class="site-footer">Prototype - demo data only</footer>
+</body>
+</html>

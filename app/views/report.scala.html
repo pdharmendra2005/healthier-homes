@@ -1,0 +1,50 @@
+@(reportForm: Form[controllers.ReportData])(implicit request: MessagesRequestHeader)
+@import helper._
+@main("Report a problem") {
+  <h1>Report damp, mould or cold in your home</h1>
+  <p class="lead">Tell us early and we can fix it before it affects your health.</p>
+
+  @if(reportForm.hasErrors) {
+    <div class="error-summary" role="alert" tabindex="-1">
+      <h2>There is a problem</h2>
+      <ul>@for(e <- reportForm.errors) { <li><a href="#@e.key">@e.message</a></li> }</ul>
+    </div>
+  }
+
+  @form(routes.ReportController.submit, Symbol("novalidate") -> "") {
+    @CSRF.formField
+
+    <div class="field @if(reportForm("homeId").hasErrors){has-error}">
+      <label for="homeId">Your home reference</label>
+      <p class="hint" id="homeId-hint">It's on your tenancy letter, for example H001</p>
+      <input type="text" id="homeId" name="homeId" value="@reportForm("homeId").value" aria-describedby="homeId-hint" autocomplete="off">
+    </div>
+
+    <fieldset class="field @if(reportForm("issue").hasErrors){has-error}">
+      <legend id="issue">What is the problem?</legend>
+      @for(i <- IssueType.all) {
+        <div class="radio">
+          <input type="radio" id="issue-@i.key" name="issue" value="@i.key" @if(reportForm("issue").value.contains(i.key)){checked}>
+          <label for="issue-@i.key">@i.label</label>
+        </div>
+      }
+    </fieldset>
+
+    <fieldset class="field">
+      <legend id="severity">How bad is it?</legend>
+      @for((v, l) <- Seq("1" -> "A small patch or only sometimes", "2" -> "In more than one room", "3" -> "Very bad, or someone is unwell")) {
+        <div class="radio">
+          <input type="radio" id="severity-@v" name="severity" value="@v" @if(reportForm("severity").value.getOrElse("1") == v){checked}>
+          <label for="severity-@v">@l</label>
+        </div>
+      }
+    </fieldset>
+
+    <div class="field">
+      <label for="description">Tell us more (optional)</label>
+      <textarea id="description" name="description" rows="4" maxlength="500">@reportForm("description").value</textarea>
+    </div>
+
+    <button type="submit" class="button">Send report</button>
+  }
+}

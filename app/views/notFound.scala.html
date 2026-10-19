@@ -1,0 +1,6 @@
+@(message: String)(implicit request: RequestHeader)
+@main("Not found") {
+  <h1>Page not found</h1>
+  <p>@message</p>
+  <p><a href="@routes.DashboardController.index(None)">Go to the dashboard</a></p>
+}

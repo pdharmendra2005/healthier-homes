@@ -1,0 +1,64 @@
+@(a: RiskAssessment, readings: Seq[Reading], reports: Seq[TenantReport])(implicit request: MessagesRequestHeader)
+@import helper._
+@main(a.home.address) {
+  <p><a href="@routes.DashboardController.index(None)">&larr; Back to all homes</a></p>
+  @request.flash.get("success").map { msg => <div class="notice" role="status">@msg</div> }
+
+  <h1>@a.home.address</h1>
+  <p><span class="badge @a.band.cssClass">@a.score <span class="band">@a.band.label risk</span></span></p>
+
+  <div class="grid">
+    <section aria-labelledby="why">
+      <h2 id="why">Why this home is flagged</h2>
+      @if(a.reasons.isEmpty) { <p>No concerns found.</p> } else {
+        <ul>@for(r <- a.reasons) { <li>@r</li> }</ul>
+      }
+      @a.home.visitScheduled match {
+        case Some(d) => { <p><strong>Visit booked for @d</strong></p> }
+        case None => {
+          @form(routes.DashboardController.scheduleVisit(a.home.id)) {
+            @CSRF.formField
+            <button type="submit" class="button">Book a visit</button>
+          }
+        }
+      }
+    </section>
+
+    <section aria-labelledby="household">
+      <h2 id="household">Household</h2>
+      <dl>
+        <dt>Tenant</dt><dd>@a.home.tenantName (@a.home.phone)</dd>
+        <dt>Adults</dt><dd>@a.home.occupants.adults</dd>
+        <dt>Children under 5</dt><dd>@a.home.occupants.childrenUnder5</dd>
+        <dt>Over 65</dt><dd>@a.home.occupants.over65</dd>
+        <dt>Respiratory condition</dt><dd>@if(a.home.occupants.respiratoryCondition){Yes}else{No}</dd>
+        <dt>EPC rating</dt><dd>@a.home.epcRating</dd>
+      </dl>
+    </section>
+  </div>
+
+  <section aria-labelledby="reports">
+    <h2 id="reports">Tenant reports</h2>
+    @if(reports.isEmpty) { <p>No reports.</p> } else {
+      <ul>@for(r <- reports) { <li><strong>@r.date</strong> - @r.issue.key (severity @r.severity/3): @r.description</li> }</ul>
+    }
+  </section>
+
+  <section aria-labelledby="readings">
+    <h2 id="readings">Sensor readings (last 14 days)</h2>
+    @if(readings.isEmpty) { <p>No sensor data.</p> } else {
+      <table class="readings">
+        <thead><tr><th scope="col">Date</th><th scope="col">Temperature</th><th scope="col">Humidity</th></tr></thead>
+        <tbody>
+        @for(r <- readings) {
+          <tr>
+            <td>@r.date</td>
+            <td class="@if(r.temperatureC < 18){warn}">@("%.1f".format(r.temperatureC))&deg;C</td>
+            <td class="@if(r.humidityPct > 70){warn}">@("%.0f".format(r.humidityPct))%</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    }
+  </section>
+}

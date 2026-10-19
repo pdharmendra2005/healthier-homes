@@ -1,0 +1,8 @@
+@()(implicit request: MessagesRequestHeader)
+@main("Report sent") {
+  <div class="panel" role="status">
+    <h1>Thank you, we've got your report</h1>
+    <p>A housing officer will contact you within 5 working days, or sooner if someone is unwell.</p>
+  </div>
+  <p><a href="@routes.ReportController.form">Report another problem</a></p>
+}

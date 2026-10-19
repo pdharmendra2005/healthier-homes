@@ -1,0 +1,15 @@
+# Officer dashboard
+GET     /                         controllers.DashboardController.index(band: Option[String] ?= None)
+GET     /homes/:id                controllers.DashboardController.home(id: String)
+POST    /homes/:id/visit          controllers.DashboardController.scheduleVisit(id: String)
+
+# Tenant self-report (mobile first)
+GET     /report                   controllers.ReportController.form
+POST    /report                   controllers.ReportController.submit
+GET     /report/thanks            controllers.ReportController.thanks
+
+# JSON API (for other services / QA automation)
+GET     /api/homes/at-risk        controllers.ApiController.atRisk(minScore: Int ?= 40)
+GET     /api/homes/:id/risk       controllers.ApiController.risk(id: String)
+
+GET     /assets/*file             controllers.Assets.versioned(path="/public", file: Asset)

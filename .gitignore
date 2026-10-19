@@ -1,0 +1,7 @@
+target/
+project/target/
+project/project/
+logs/
+.bsp/
+.idea/
+RUNNING_PID

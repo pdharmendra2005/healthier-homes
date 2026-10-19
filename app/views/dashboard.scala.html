@@ -1,0 +1,33 @@
+@(shown: Seq[RiskAssessment], all: Seq[RiskAssessment], selected: Option[RiskBand])(implicit request: MessagesRequestHeader)
+@main("Homes at risk") {
+  <h1>Homes at risk from cold, damp and mould</h1>
+  <p class="lead">Ranked by risk score. Contact high-risk homes first.</p>
+
+  <ul class="summary" aria-label="Summary">
+    @for(b <- Seq(RiskBand.High, RiskBand.Medium, RiskBand.Low)) {
+      <li class="summary-card @b.cssClass">
+        <a href="@routes.DashboardController.index(Some(b.label))" @if(selected.contains(b)){aria-current="true"}>
+          <span class="count">@all.count(_.band == b)</span> @b.label risk
+        </a>
+      </li>
+    }
+  </ul>
+  @if(selected.isDefined) { <p><a href="@routes.DashboardController.index(None)">Show all homes</a></p> }
+
+  <table class="homes">
+    <caption class="visually-hidden">Homes ordered by risk score, highest first</caption>
+    <thead>
+      <tr><th scope="col">Score</th><th scope="col">Home</th><th scope="col">Main reason</th><th scope="col">Visit</th></tr>
+    </thead>
+    <tbody>
+    @for(a <- shown) {
+      <tr>
+        <td data-label="Score"><span class="badge @a.band.cssClass">@a.score <span class="band">@a.band.label</span></span></td>
+        <td data-label="Home"><a href="@routes.DashboardController.home(a.home.id)">@a.home.address</a><br><small>@a.home.id &middot; @a.home.tenantName</small></td>
+        <td data-label="Main reason">@a.reasons.headOption.getOrElse("No concerns")</td>
+        <td data-label="Visit">@a.home.visitScheduled.map(d => s"Booked $d").getOrElse("Not booked")</td>
+      </tr>
+    }
+    </tbody>
+  </table>
+}
