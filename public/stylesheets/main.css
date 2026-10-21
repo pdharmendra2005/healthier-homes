@@ -75,3 +75,8 @@ select { font:inherit; padding:6px; border:2px solid var(--text); max-width:100%
 .checkbox { display:flex; align-items:flex-start; gap:10px; } .checkbox label { font-weight:400; margin:0; }
 .checkbox input { width:28px; height:28px; margin:0; flex:none; }
 details summary { cursor:pointer; color:var(--link); margin:12px 0; }
+@media (max-width: 640px) {
+  table.reasons td.num, table.reasons th.num { text-align:left; white-space:normal; }
+  table.reasons, table.reasons tbody, table.reasons tfoot { display:block; width:100%; }
+  table.reasons tr { box-sizing:border-box; width:100%; }
+}
