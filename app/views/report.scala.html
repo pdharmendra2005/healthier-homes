@@ -1,8 +1,8 @@
 @(reportForm: Form[controllers.ReportData])(implicit request: MessagesRequestHeader)
 @import helper._
 @main("Report a problem") {
-  <h1>Report damp, mould or cold in your home</h1>
-  <p class="lead">Tell us early and we can fix it before it affects your health.</p>
+  <h1>Tell us about damp, mould or cold in your home</h1>
+  <p class="lead">You don't need to be sure. Telling us early means we can fix it sooner, and it won't affect your tenancy.</p>
 
   @if(reportForm.hasErrors) {
     <div class="error-summary" role="alert" tabindex="-1">
@@ -16,7 +16,7 @@
 
     <div class="field @if(reportForm("homeId").hasErrors){has-error}">
       <label for="homeId">Your home reference</label>
-      <p class="hint" id="homeId-hint">It's on your tenancy letter, for example H001</p>
+      <p class="hint" id="homeId-hint">It's on your tenancy letter, for example P01</p>
       <input type="text" id="homeId" name="homeId" value="@reportForm("homeId").value" aria-describedby="homeId-hint" autocomplete="off">
     </div>
 
@@ -43,6 +43,14 @@
     <div class="field">
       <label for="description">Tell us more (optional)</label>
       <textarea id="description" name="description" rows="4" maxlength="500">@reportForm("description").value</textarea>
+    </div>
+
+    <div class="field">
+      <div class="checkbox">
+        <input type="checkbox" id="breathingConsent" name="breathingConsent" value="true" aria-describedby="consent-hint" @if(reportForm("breathingConsent").value.contains("true")){checked}>
+        <label for="breathingConsent">Someone in my home has a breathing condition, like asthma or COPD, and I'm happy for Cloch to use this to help us sooner (optional)</label>
+      </div>
+      <p class="hint" id="consent-hint">We only use this to decide who to help first. You can ask us to remove it at any time.</p>
     </div>
 
     <button type="submit" class="button">Send report</button>

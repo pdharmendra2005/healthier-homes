@@ -1,33 +1,58 @@
-@(shown: Seq[RiskAssessment], all: Seq[RiskAssessment], selected: Option[RiskBand])(implicit request: MessagesRequestHeader)
-@main("Homes at risk") {
-  <h1>Homes at risk from cold, damp and mould</h1>
-  <p class="lead">Ranked by risk score. Contact high-risk homes first.</p>
+@(week: Seq[RiskAssessment], all: Seq[RiskAssessment], shown: Seq[RiskAssessment], selected: Option[RiskBand], capacity: Int)(implicit request: MessagesRequestHeader)
+@main("Who to help first") {
+  <h1>Who to help first</h1>
+  <p class="lead">Homes most at risk from cold, damp and mould, worked out from information Cloch already holds. No sensors needed.</p>
 
-  <ul class="summary" aria-label="Summary">
-    @for(b <- Seq(RiskBand.High, RiskBand.Medium, RiskBand.Low)) {
-      <li class="summary-card @b.cssClass">
-        <a href="@routes.DashboardController.index(Some(b.label))" @if(selected.contains(b)){aria-current="true"}>
-          <span class="count">@all.count(_.band == b)</span> @b.label risk
-        </a>
-      </li>
+  <section aria-labelledby="week-h">
+    <h2 id="week-h">This week's list</h2>
+    <form method="get" action="@routes.DashboardController.index(None, 5)" class="inline-form">
+      <label for="capacity">Homes we can help this week</label>
+      <input type="number" id="capacity" name="capacity" min="1" max="50" value="@capacity" inputmode="numeric">
+      <button type="submit" class="button secondary">Update list</button>
+    </form>
+    <p class="hint">Homes that already have an action in progress are left off this list.</p>
+    @if(week.isEmpty) { <p>No homes need help right now.</p> } else {
+      <ol class="worklist">
+      @for(a <- week) {
+        <li>
+          <span class="badge @a.band.cssClass">@a.score <span class="band">@a.band.label</span></span>
+          <a href="@routes.DashboardController.home(a.property.id)">@a.property.address</a>
+          @if(a.silent) { <span class="tag">Not heard from</span> }
+          <p class="next"><strong>Next step:</strong> @a.nextStep</p>
+        </li>
+      }
+      </ol>
     }
-  </ul>
-  @if(selected.isDefined) { <p><a href="@routes.DashboardController.index(None)">Show all homes</a></p> }
+  </section>
 
-  <table class="homes">
-    <caption class="visually-hidden">Homes ordered by risk score, highest first</caption>
-    <thead>
-      <tr><th scope="col">Score</th><th scope="col">Home</th><th scope="col">Main reason</th><th scope="col">Visit</th></tr>
-    </thead>
-    <tbody>
-    @for(a <- shown) {
-      <tr>
-        <td data-label="Score"><span class="badge @a.band.cssClass">@a.score <span class="band">@a.band.label</span></span></td>
-        <td data-label="Home"><a href="@routes.DashboardController.home(a.home.id)">@a.home.address</a><br><small>@a.home.id &middot; @a.home.tenantName</small></td>
-        <td data-label="Main reason">@a.reasons.headOption.getOrElse("No concerns")</td>
-        <td data-label="Visit">@a.home.visitScheduled.map(d => s"Booked $d").getOrElse("Not booked")</td>
-      </tr>
-    }
-    </tbody>
-  </table>
+  <section aria-labelledby="all-h">
+    <h2 id="all-h">All homes</h2>
+    <ul class="summary" aria-label="Homes by risk band">
+      @for(b <- RiskBand.all) {
+        <li class="summary-card @b.cssClass">
+          <a href="@routes.DashboardController.index(Some(b.label), capacity)" @if(selected.contains(b)){aria-current="true"}>
+            <span class="count">@all.count(_.band == b)</span> @b.label risk
+          </a>
+        </li>
+      }
+    </ul>
+    @if(selected.isDefined) { <p><a href="@routes.DashboardController.index(None, capacity)">Show all homes</a></p> }
+
+    <table class="homes">
+      <caption class="visually-hidden">Homes ordered by risk score, highest first</caption>
+      <thead>
+        <tr><th scope="col">Score</th><th scope="col">Home</th><th scope="col">Main reason</th><th scope="col">Next step</th></tr>
+      </thead>
+      <tbody>
+      @for(a <- shown) {
+        <tr>
+          <td data-label="Score"><span class="badge @a.band.cssClass">@a.score <span class="band">@a.band.label</span></span></td>
+          <td data-label="Home"><a href="@routes.DashboardController.home(a.property.id)">@a.property.address</a><br><small>@a.property.id</small></td>
+          <td data-label="Main reason">@a.mainReason</td>
+          <td data-label="Next step">@a.nextStep</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </section>
 }

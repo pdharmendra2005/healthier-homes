@@ -1,0 +1,38 @@
+@(s: services.OutcomeSummary)(implicit request: MessagesRequestHeader)
+@main("Did it work?") {
+  <h1>Did the help work?</h1>
+  <p class="lead">What we did for at-risk homes and what happened next. Use this when reporting to managers, health partners and the regulator.</p>
+
+  <ul class="summary" aria-label="Outcome summary">
+    <li class="summary-card low"><div class="card"><span class="count">@s.worked</span> worked (resolved or improved)</div></li>
+    <li class="summary-card high"><div class="card"><span class="count">@s.notWorked</span> didn't work</div></li>
+    <li class="summary-card medium"><div class="card"><span class="count">@s.open.size</span> waiting for an outcome</div></li>
+  </ul>
+  @if(s.done.nonEmpty) { <p><strong>@s.workedPct%</strong> of actions with a recorded outcome worked.</p> }
+
+  <h2>Actions with an outcome</h2>
+  @if(s.done.isEmpty) { <p>None yet.</p> } else {
+    <table class="homes">
+      <thead><tr><th scope="col">Home</th><th scope="col">Action</th><th scope="col">Outcome</th><th scope="col">Risk now</th></tr></thead>
+      <tbody>
+      @for((act, o, r) <- s.done) {
+        <tr>
+          <td data-label="Home"><a href="@routes.DashboardController.home(r.property.id)">@r.property.address</a></td>
+          <td data-label="Action">@act.kind.label (@act.date)</td>
+          <td data-label="Outcome"><span class="outcome @if(o.result.worked){worked}else{not-worked}">@o.result.label</span> @if(o.notes.nonEmpty){- @o.notes}</td>
+          <td data-label="Risk now"><span class="badge @r.band.cssClass">@r.score <span class="band">@r.band.label</span></span></td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  }
+
+  <h2>Waiting for an outcome</h2>
+  @if(s.open.isEmpty) { <p>None.</p> } else {
+    <ul>
+      @for((act, r) <- s.open) {
+        <li><a href="@routes.DashboardController.home(r.property.id)">@r.property.address</a>: @act.kind.label on @act.date</li>
+      }
+    </ul>
+  }
+}
