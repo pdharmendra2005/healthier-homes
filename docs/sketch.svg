@@ -1,57 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" font-family="Arial, sans-serif" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="620" viewBox="0 0 960 620" font-family="Arial, sans-serif" font-size="14">
   <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
-  <rect width="900" height="560" fill="#fff"/>
-  <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="bold">Healthier Homes - how the prototype works</text>
+  <rect width="960" height="620" fill="#fff"/>
+  <text x="480" y="30" text-anchor="middle" font-size="20" font-weight="bold">Healthier Homes v2 - find, act, check it worked</text>
 
-  <!-- users -->
-  <rect x="30" y="70" width="190" height="70" rx="8" fill="#e8f1fb" stroke="#1d70b8"/>
-  <text x="125" y="98" text-anchor="middle" font-weight="bold">Tenant (on phone)</text>
-  <text x="125" y="118" text-anchor="middle">"I have mould"</text>
-  <rect x="30" y="200" width="190" height="70" rx="8" fill="#e8f1fb" stroke="#1d70b8"/>
-  <text x="125" y="228" text-anchor="middle" font-weight="bold">Housing officer</text>
-  <text x="125" y="248" text-anchor="middle">"Who do I visit first?"</text>
-  <rect x="30" y="330" width="190" height="70" rx="8" fill="#e8f1fb" stroke="#1d70b8"/>
-  <text x="125" y="358" text-anchor="middle" font-weight="bold">Other service / QA test</text>
-  <text x="125" y="378" text-anchor="middle">JSON API</text>
+  <text x="125" y="62" text-anchor="middle" font-weight="bold">1. Data Cloch already has</text>
+  <g font-size="13">
+    <rect x="30" y="72" width="190" height="34" rx="6" fill="#e9f5ee" stroke="#00703c"/><text x="125" y="94" text-anchor="middle">Property records (EPC, walls)</text>
+    <rect x="30" y="112" width="190" height="34" rx="6" fill="#e9f5ee" stroke="#00703c"/><text x="125" y="134" text-anchor="middle">Repairs history</text>
+    <rect x="30" y="152" width="190" height="34" rx="6" fill="#e9f5ee" stroke="#00703c"/><text x="125" y="174" text-anchor="middle">Tenancy (+ consent)</text>
+    <rect x="30" y="192" width="190" height="34" rx="6" fill="#e9f5ee" stroke="#00703c"/><text x="125" y="214" text-anchor="middle">Last contact date</text>
+    <rect x="30" y="232" width="190" height="34" rx="6" fill="#e9f5ee" stroke="#00703c"/><text x="125" y="254" text-anchor="middle">Tenant reports (phone form)</text>
+    <rect x="30" y="272" width="190" height="34" rx="6" fill="#fff" stroke="#00703c" stroke-dasharray="5,4"/><text x="125" y="294" text-anchor="middle">Sensors (pilot only, optional)</text>
+  </g>
 
-  <!-- controllers -->
-  <rect x="290" y="60" width="280" height="360" rx="8" fill="#f3f2f1" stroke="#505a5f"/>
-  <text x="430" y="82" text-anchor="middle" font-weight="bold">Play app (conf/routes -> controllers)</text>
-  <rect x="310" y="95" width="240" height="60" rx="6" fill="#fff" stroke="#333"/>
-  <text x="430" y="118" text-anchor="middle" font-weight="bold">ReportController</text>
-  <text x="430" y="138" text-anchor="middle">GET/POST /report</text>
-  <rect x="310" y="205" width="240" height="60" rx="6" fill="#fff" stroke="#333"/>
-  <text x="430" y="228" text-anchor="middle" font-weight="bold">DashboardController</text>
-  <text x="430" y="248" text-anchor="middle">GET /   GET /homes/:id   POST visit</text>
-  <rect x="310" y="335" width="240" height="60" rx="6" fill="#fff" stroke="#333"/>
-  <text x="430" y="358" text-anchor="middle" font-weight="bold">ApiController</text>
-  <text x="430" y="378" text-anchor="middle">GET /api/homes/at-risk</text>
+  <rect x="290" y="120" width="230" height="130" rx="8" fill="#fff4e5" stroke="#b35900"/>
+  <text x="405" y="145" text-anchor="middle" font-weight="bold">2. RiskService</text>
+  <text x="405" y="168" text-anchor="middle">score 0-100</text>
+  <text x="405" y="188" text-anchor="middle">+ reasons with sources</text>
+  <text x="405" y="208" text-anchor="middle">+ suggested next step</text>
+  <text x="405" y="230" text-anchor="middle" font-size="12">unknown = "please check", not safe</text>
 
-  <!-- services -->
-  <rect x="630" y="150" width="240" height="80" rx="6" fill="#fff4e5" stroke="#b35900"/>
-  <text x="750" y="175" text-anchor="middle" font-weight="bold">HomesService + RiskService</text>
-  <text x="750" y="195" text-anchor="middle">score 0-100 + reasons</text>
-  <text x="750" y="215" text-anchor="middle">High / Medium / Low</text>
-  <rect x="630" y="290" width="240" height="80" rx="6" fill="#e9f5ee" stroke="#00703c"/>
-  <text x="750" y="315" text-anchor="middle" font-weight="bold">HomeRepository</text>
-  <text x="750" y="335" text-anchor="middle">homes, sensor readings,</text>
-  <text x="750" y="355" text-anchor="middle">tenant reports (in memory)</text>
+  <rect x="600" y="70" width="320" height="80" rx="8" fill="#e8f1fb" stroke="#1d70b8"/>
+  <text x="760" y="95" text-anchor="middle" font-weight="bold">3. This week's list (staff)</text>
+  <text x="760" y="117" text-anchor="middle">top N homes we can help this week</text>
+  <text x="760" y="137" text-anchor="middle">"Not heard from" = reach out</text>
+
+  <rect x="600" y="190" width="320" height="70" rx="8" fill="#e8f1fb" stroke="#1d70b8"/>
+  <text x="760" y="218" text-anchor="middle" font-weight="bold">4. Record an action</text>
+  <text x="760" y="240" text-anchor="middle">survey, mould wash, heating fix, call...</text>
+
+  <rect x="600" y="300" width="320" height="80" rx="8" fill="#e8f1fb" stroke="#1d70b8"/>
+  <text x="760" y="326" text-anchor="middle" font-weight="bold">5. Did it work?</text>
+  <text x="760" y="348" text-anchor="middle">Resolved / Improved / No change / Worse</text>
+  <text x="760" y="368" text-anchor="middle">summary for managers and regulator</text>
 
   <g stroke="#333" stroke-width="2" marker-end="url(#a)" fill="none">
-    <line x1="220" y1="105" x2="308" y2="125"/>
-    <line x1="220" y1="235" x2="308" y2="235"/>
-    <line x1="220" y1="365" x2="308" y2="365"/>
-    <line x1="550" y1="125" x2="680" y2="290"/>
-    <line x1="550" y1="235" x2="628" y2="200"/>
-    <line x1="550" y1="365" x2="628" y2="215"/>
-    <line x1="750" y1="230" x2="750" y2="288"/>
+    <line x1="222" y1="185" x2="288" y2="185"/>
+    <line x1="520" y1="160" x2="598" y2="115"/>
+    <line x1="760" y1="150" x2="760" y2="188"/>
+    <line x1="760" y1="260" x2="760" y2="298"/>
+    <path d="M600,340 C480,340 420,300 405,252"/>
   </g>
-  <text x="565" y="110" font-size="12">saves report</text>
+  <text x="300" y="300" font-size="12">feeds back: resolved clears old repairs,</text>
+  <text x="300" y="316" font-size="12">no change means "escalate"</text>
 
-  <!-- scoring rules -->
-  <rect x="30" y="440" width="840" height="100" rx="8" fill="#fff" stroke="#d4351c"/>
-  <text x="45" y="465" font-weight="bold">Risk score rules (last 14 days of sensor data, last 90 days of reports)</text>
-  <text x="45" y="488">+25 cold: below 18°C on half the days    +25 damp: humidity over 70% on half the days    +25 mould reported</text>
-  <text x="45" y="508">+10 EPC E/F/G (poor insulation)    +5 no sensor data    x1.3 if child under 5, over 65 or breathing condition</text>
-  <text x="45" y="528">60+ = High (visit first)    30-59 = Medium    under 30 = Low    capped at 100</text>
+  <rect x="30" y="410" width="900" height="190" rx="8" fill="#fff" stroke="#d4351c"/>
+  <text x="45" y="435" font-weight="bold">Fairness and privacy rules (QA checks these)</text>
+  <text x="45" y="460">- No sensor never lowers a score (most homes have none)</text>
+  <text x="45" y="482">- Unknown building details add "please check" points instead of counting as safe</text>
+  <text x="45" y="504">- Who lives there only raises an existing home risk; nobody is flagged just for being old, young or ill</text>
+  <text x="45" y="526">- Health and income only used with the tenant's consent; never shown in the list or API</text>
+  <text x="45" y="548">- Silence (12+ months no contact) only counts when the building already looks risky</text>
+  <text x="45" y="570">- Every point has a reason and a source; the reasons add up to the score</text>
+  <text x="45" y="592">Bands: 50+ High, 25-49 Medium, under 25 Low</text>
 </svg>

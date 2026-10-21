@@ -1,64 +1,146 @@
-@(a: RiskAssessment, readings: Seq[Reading], reports: Seq[TenantReport])(implicit request: MessagesRequestHeader)
+@(a: RiskAssessment)(implicit request: MessagesRequestHeader)
 @import helper._
-@main(a.home.address) {
-  <p><a href="@routes.DashboardController.index(None)">&larr; Back to all homes</a></p>
+@main(a.property.address) {
+  <p><a href="@routes.DashboardController.index(None, 5)">&larr; Back to who to help first</a></p>
   @request.flash.get("success").map { msg => <div class="notice" role="status">@msg</div> }
+  @request.flash.get("error").map { msg => <div class="error-summary" role="alert"><p>@msg</p></div> }
 
-  <h1>@a.home.address</h1>
-  <p><span class="badge @a.band.cssClass">@a.score <span class="band">@a.band.label risk</span></span></p>
+  <h1>@a.property.address</h1>
+  <p>
+    <span class="badge @a.band.cssClass">@a.score <span class="band">@a.band.label risk</span></span>
+    @if(a.silent) { <span class="tag">Not heard from</span> }
+  </p>
+
+  <div class="next-step">
+    <h2>Suggested next step</h2>
+    <p>@a.nextStep</p>
+  </div>
+
+  <section aria-labelledby="why">
+    <h2 id="why">Why this home is on the list</h2>
+    @if(a.reasons.isEmpty) { <p>No concerns found in the information we hold.</p> } else {
+      <table class="reasons">
+        <thead><tr><th scope="col">Reason</th><th scope="col">Where it comes from</th><th scope="col" class="num">Points</th></tr></thead>
+        <tbody>
+        @for(r <- a.reasons) {
+          <tr class="@if(r.isUnknown){unknown}">
+            <td>@r.text</td>
+            <td>@r.source</td>
+            <td class="num">@if(r.points > 0){+}@r.points</td>
+          </tr>
+        }
+        </tbody>
+        <tfoot><tr><th scope="row" colspan="2">Total score</th><td class="num"><strong>@a.score</strong></td></tr></tfoot>
+      </table>
+    }
+  </section>
 
   <div class="grid">
-    <section aria-labelledby="why">
-      <h2 id="why">Why this home is flagged</h2>
-      @if(a.reasons.isEmpty) { <p>No concerns found.</p> } else {
-        <ul>@for(r <- a.reasons) { <li>@r</li> }</ul>
-      }
-      @a.home.visitScheduled match {
-        case Some(d) => { <p><strong>Visit booked for @d</strong></p> }
-        case None => {
-          @form(routes.DashboardController.scheduleVisit(a.home.id)) {
-            @CSRF.formField
-            <button type="submit" class="button">Book a visit</button>
-          }
-        }
-      }
-    </section>
-
     <section aria-labelledby="household">
       <h2 id="household">Household</h2>
       <dl>
-        <dt>Tenant</dt><dd>@a.home.tenantName (@a.home.phone)</dd>
-        <dt>Adults</dt><dd>@a.home.occupants.adults</dd>
-        <dt>Children under 5</dt><dd>@a.home.occupants.childrenUnder5</dd>
-        <dt>Over 65</dt><dd>@a.home.occupants.over65</dd>
-        <dt>Respiratory condition</dt><dd>@if(a.home.occupants.respiratoryCondition){Yes}else{No}</dd>
-        <dt>EPC rating</dt><dd>@a.home.epcRating</dd>
+        <dt>Tenant</dt><dd>@a.household.tenantName</dd>
+        <dt>Phone</dt><dd>@a.household.phone</dd>
+        <dt>Children under 5</dt><dd>@a.household.childrenUnder5</dd>
+        <dt>Over 65</dt><dd>@a.household.over65</dd>
+        <dt>Health and income</dt>
+        <dd>
+          @if(a.household.sensitiveInfoConsent) {
+            Breathing condition: @if(a.household.respiratoryCondition){Yes}else{No}<br>
+            Low income: @if(a.household.lowIncome){Yes}else{No}
+          } else { Not shared - no consent }
+        </dd>
+        <dt>Last contact</dt><dd>@a.household.lastContact.map(_.toString).getOrElse("None on record")</dd>
+      </dl>
+    </section>
+
+    <section aria-labelledby="property">
+      <h2 id="property">Property</h2>
+      <dl>
+        <dt>Walls</dt><dd>@a.property.wallType.map(_.label).getOrElse("Not known")</dd>
+        <dt>EPC rating</dt><dd>@a.property.epcRating.map(_.toString).getOrElse("Not known")</dd>
+        <dt>Heating</dt><dd>@a.property.heating.map(_.label).getOrElse("Not known")</dd>
+        <dt>Sensor</dt><dd>@if(a.data.readings.nonEmpty){Pilot sensor fitted}else{No sensor (most homes)}</dd>
       </dl>
     </section>
   </div>
 
-  <section aria-labelledby="reports">
-    <h2 id="reports">Tenant reports</h2>
-    @if(reports.isEmpty) { <p>No reports.</p> } else {
-      <ul>@for(r <- reports) { <li><strong>@r.date</strong> - @r.issue.key (severity @r.severity/3): @r.description</li> }</ul>
+  <section aria-labelledby="actions">
+    <h2 id="actions">What we've done, and did it work?</h2>
+    @if(a.data.actions.isEmpty) { <p>Nothing recorded yet.</p> }
+    @for(act <- a.data.actions) {
+      <div class="action-card">
+        <p><strong>@act.kind.label</strong> on @act.date @if(act.notes.nonEmpty){- @act.notes}</p>
+        @act.outcome match {
+          case Some(o) => {
+            <p>Outcome on @o.date: <span class="outcome @if(o.result.worked){worked}else{not-worked}">@o.result.label</span> @if(o.notes.nonEmpty){- @o.notes}</p>
+          }
+          case None => {
+            @form(routes.DashboardController.recordOutcome(a.property.id, act.id)) {
+              @CSRF.formField
+              <fieldset class="field">
+                <legend>Did it work?</legend>
+                @for(r <- OutcomeResult.all) {
+                  <div class="radio">
+                    <input type="radio" id="result-@act.id-@r.key" name="result" value="@r.key">
+                    <label for="result-@act.id-@r.key">@r.label</label>
+                  </div>
+                }
+              </fieldset>
+              <div class="field">
+                <label for="outcome-notes-@act.id">Notes (optional)</label>
+                <textarea id="outcome-notes-@act.id" name="notes" rows="2" maxlength="500"></textarea>
+              </div>
+              <button type="submit" class="button">Save outcome</button>
+            }
+          }
+        }
+      </div>
+    }
+
+    <h3>Record a new action</h3>
+    @form(routes.DashboardController.addAction(a.property.id)) {
+      @CSRF.formField
+      <div class="field">
+        <label for="kind">Action</label>
+        <select id="kind" name="kind">
+          @for(k <- ActionKind.all) { <option value="@k.key">@k.label</option> }
+        </select>
+      </div>
+      <div class="field">
+        <label for="action-notes">Notes (optional)</label>
+        <textarea id="action-notes" name="notes" rows="2" maxlength="500"></textarea>
+      </div>
+      <button type="submit" class="button">Record action</button>
     }
   </section>
 
-  <section aria-labelledby="readings">
-    <h2 id="readings">Sensor readings (last 14 days)</h2>
-    @if(readings.isEmpty) { <p>No sensor data.</p> } else {
-      <table class="readings">
-        <thead><tr><th scope="col">Date</th><th scope="col">Temperature</th><th scope="col">Humidity</th></tr></thead>
-        <tbody>
-        @for(r <- readings) {
-          <tr>
-            <td>@r.date</td>
-            <td class="@if(r.temperatureC < 18){warn}">@("%.1f".format(r.temperatureC))&deg;C</td>
-            <td class="@if(r.humidityPct > 70){warn}">@("%.0f".format(r.humidityPct))%</td>
-          </tr>
-        }
-        </tbody>
-      </table>
+  <section aria-labelledby="history">
+    <h2 id="history">History</h2>
+    <h3>Repairs</h3>
+    @if(a.data.repairs.isEmpty) { <p>No repairs on record.</p> } else {
+      <ul>@for(r <- a.data.repairs) { <li><strong>@r.date</strong> - @r.category.label: @r.description</li> }</ul>
+    }
+    <h3>Tenant reports</h3>
+    @if(a.data.reports.isEmpty) { <p>No reports.</p> } else {
+      <ul>@for(r <- a.data.reports) { <li><strong>@r.date</strong> - @r.issue.key (severity @r.severity/3): @r.description</li> }</ul>
+    }
+    @if(a.data.readings.nonEmpty) {
+      <details>
+        <summary>Pilot sensor readings (last 14 days)</summary>
+        <table class="readings">
+          <thead><tr><th scope="col">Date</th><th scope="col">Temperature</th><th scope="col">Humidity</th></tr></thead>
+          <tbody>
+          @for(r <- a.data.readings) {
+            <tr>
+              <td>@r.date</td>
+              <td class="@if(r.temperatureC < 18){warn}">@("%.1f".format(r.temperatureC))&deg;C</td>
+              <td class="@if(r.humidityPct > 70){warn}">@("%.0f".format(r.humidityPct))%</td>
+            </tr>
+          }
+          </tbody>
+        </table>
+      </details>
     }
   </section>
 }

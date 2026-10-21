@@ -10,15 +10,16 @@
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
   <header class="site-header">
-    <a class="brand" href="@routes.DashboardController.index(None)">Healthier Homes</a>
+    <a class="brand" href="@routes.DashboardController.index(None, 5)">Healthier Homes <span class="org">Cloch prototype</span></a>
     <nav aria-label="Main">
-      <a href="@routes.DashboardController.index(None)">Officer dashboard</a>
+      <a href="@routes.DashboardController.index(None, 5)">Who to help first</a>
+      <a href="@routes.DashboardController.outcomes">Did it work?</a>
       <a href="@routes.ReportController.form">Report a problem</a>
     </nav>
   </header>
   <main id="main" class="container">
     @content
   </main>
-  <footer class="site-footer">Prototype - demo data only</footer>
+  <footer class="site-footer">Prototype - fictional demo data only</footer>
 </body>
 </html>

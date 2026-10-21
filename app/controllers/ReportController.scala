@@ -9,7 +9,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
 
-final case class ReportData(homeId: String, issue: String, severity: Int, description: String)
+final case class ReportData(homeId: String, issue: String, severity: Int, description: String, breathingConsent: Boolean)
 
 @Singleton
 class ReportController @Inject() (cc: MessagesControllerComponents, repo: HomeRepository, homes: HomesService)
@@ -19,10 +19,11 @@ class ReportController @Inject() (cc: MessagesControllerComponents, repo: HomeRe
     mapping(
       "homeId" -> text
         .transform[String](_.trim.toUpperCase, identity)
-        .verifying("Enter your home reference, for example H001", repo.find(_).isDefined),
-      "issue"       -> text.verifying("Choose what the problem is", IssueType.fromKey(_).isDefined),
-      "severity"    -> number(min = 1, max = 3),
-      "description" -> text(maxLength = 500)
+        .verifying("Enter your home reference, for example P01", repo.exists(_)),
+      "issue"            -> text.verifying("Choose what the problem is", IssueType.fromKey(_).isDefined),
+      "severity"         -> number(min = 1, max = 3),
+      "description"      -> text(maxLength = 500),
+      "breathingConsent" -> boolean
     )(ReportData.apply)(ReportData.unapply)
   )
 
@@ -34,7 +35,8 @@ class ReportController @Inject() (cc: MessagesControllerComponents, repo: HomeRe
     reportForm.bindFromRequest().fold(
       errors => BadRequest(views.html.report(errors)),
       data => {
-        repo.addReport(TenantReport(data.homeId, homes.today, IssueType.fromKey(data.issue).get, data.severity, data.description.trim))
+        val report = TenantReport(data.homeId, homes.today, IssueType.fromKey(data.issue).get, data.severity, data.description.trim)
+        repo.addReport(report, data.breathingConsent)
         Redirect(routes.ReportController.thanks)
       }
     )

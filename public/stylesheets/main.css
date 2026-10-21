@@ -44,3 +44,28 @@ input[type=text], textarea { width:100%; max-width:30em; font:inherit; padding:8
   table.homes td { display:block; border:0; padding:4px 0; }
   table.homes td::before { content: attr(data-label) ": "; font-weight:700; }
 }
+
+/* v2 additions */
+.brand .org { font-weight:400; font-size:.75em; opacity:.85; }
+.button.secondary { background:#f3f2f1; color:var(--text); box-shadow:0 2px 0 #929191; }
+.inline-form { display:flex; flex-wrap:wrap; align-items:flex-end; gap:8px 12px; margin:8px 0; }
+.inline-form label { margin:0; }
+.inline-form input[type=number] { width:5em; font:inherit; padding:6px; border:2px solid var(--text); }
+.worklist { padding-left:1.4em; }
+.worklist li { margin:0 0 16px; padding-left:4px; }
+.worklist .next { margin:4px 0 0; }
+.tag { display:inline-block; background:#1d70b8; color:#fff; font-size:.8em; padding:1px 8px; margin-left:4px; }
+.summary-card .card { display:block; padding:12px; border-left:8px solid; background:var(--bg); }
+.summary-card.high .card { border-color:var(--high);} .summary-card.medium .card { border-color:var(--medium);} .summary-card.low .card { border-color:var(--low);}
+.next-step { border-left:8px solid #1d70b8; background:#e8f1fb; padding:8px 16px; margin:16px 0; }
+.next-step h2 { margin:8px 0 4px; font-size:1.1em; } .next-step p { margin:0 0 8px; font-size:1.1em; }
+table.reasons td.num, table.reasons th.num { text-align:right; white-space:nowrap; }
+table.reasons tr.unknown td { font-style:italic; background:#fff7bf; }
+table.reasons tfoot th, table.reasons tfoot td { border-top:2px solid var(--text); border-bottom:0; }
+.action-card { border:1px solid #b1b4b6; padding:8px 16px; margin:12px 0; }
+.outcome { font-weight:700; padding:1px 8px; }
+.outcome.worked { background:#cce2d8; color:#005a30; } .outcome.not-worked { background:#f4cdc6; color:#942514; }
+select { font:inherit; padding:6px; border:2px solid var(--text); max-width:100%; }
+.checkbox { display:flex; align-items:flex-start; gap:10px; } .checkbox label { font-weight:400; margin:0; }
+.checkbox input { width:28px; height:28px; margin:0; flex:none; }
+details summary { cursor:pointer; color:var(--link); margin:12px 0; }
