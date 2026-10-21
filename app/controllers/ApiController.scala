@@ -12,7 +12,7 @@ import play.api.mvc._
 class ApiController @Inject() (cc: ControllerComponents, homes: HomesService) extends AbstractController(cc) {
 
   private implicit val reasonWrites: Writes[Reason] = (r: Reason) =>
-    Json.obj("points" -> r.points, "text" -> r.text, "source" -> r.source)
+    Json.obj("points" -> r.points, "text" -> r.shareableText, "source" -> r.source)
 
   private implicit val assessmentWrites: Writes[RiskAssessment] = (a: RiskAssessment) => Json.obj(
     "homeId"   -> a.property.id,

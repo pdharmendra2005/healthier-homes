@@ -14,12 +14,12 @@ class DashboardController @Inject() (cc: MessagesControllerComponents, homes: Ho
     extends MessagesAbstractController(cc) {
 
   private val actionForm = Form(tuple(
-    "kind"  -> text.verifying("Choose an action", ActionKind.fromKey(_).isDefined),
+    "kind"  -> default(text, "").verifying("Choose an action", ActionKind.fromKey(_).isDefined),
     "notes" -> text(maxLength = 500)
   ))
 
   private val outcomeForm = Form(tuple(
-    "result" -> text.verifying("Choose whether it worked", OutcomeResult.fromKey(_).isDefined),
+    "result" -> default(text, "").verifying("Choose whether it worked", OutcomeResult.fromKey(_).isDefined),
     "notes"  -> text(maxLength = 500)
   ))
 
