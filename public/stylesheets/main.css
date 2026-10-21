@@ -43,6 +43,12 @@ input[type=text], textarea { width:100%; max-width:30em; font:inherit; padding:8
   table.homes tr { display:block; border:1px solid #b1b4b6; margin-bottom:12px; padding:8px; }
   table.homes td { display:block; border:0; padding:4px 0; }
   table.homes td::before { content: attr(data-label) ": "; font-weight:700; }
+  table.reasons thead { position:absolute; left:-9999px; }
+  table.reasons tr { display:block; border:1px solid #b1b4b6; margin-bottom:12px; padding:8px; }
+  table.reasons td, table.reasons th { display:block; border:0; padding:4px 0; text-align:left; }
+  table.reasons td.num { text-align:left; }
+  table.reasons tbody td::before { content: attr(data-label) ": "; font-weight:700; }
+  table.reasons tfoot th { display:inline; } table.reasons tfoot td { display:inline; padding-left:8px; }
 }
 
 /* v2 additions */

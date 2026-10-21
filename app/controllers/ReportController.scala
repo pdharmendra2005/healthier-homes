@@ -20,7 +20,7 @@ class ReportController @Inject() (cc: MessagesControllerComponents, repo: HomeRe
       "homeId" -> text
         .transform[String](_.trim.toUpperCase, identity)
         .verifying("Enter your home reference, for example P01", repo.exists(_)),
-      "issue"            -> text.verifying("Choose what the problem is", IssueType.fromKey(_).isDefined),
+      "issue"            -> default(text, "").verifying("Choose what the problem is", IssueType.fromKey(_).isDefined),
       "severity"         -> number(min = 1, max = 3),
       "description"      -> text(maxLength = 500),
       "breathingConsent" -> boolean

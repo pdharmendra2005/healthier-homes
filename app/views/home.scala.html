@@ -24,13 +24,13 @@
         <tbody>
         @for(r <- a.reasons) {
           <tr class="@if(r.isUnknown){unknown}">
-            <td>@r.text</td>
-            <td>@r.source</td>
-            <td class="num">@if(r.points > 0){+}@r.points</td>
+            <td data-label="Reason">@r.text</td>
+            <td data-label="Where it comes from">@r.source</td>
+            <td class="num" data-label="Points">@if(r.points > 0){+}@r.points</td>
           </tr>
         }
         </tbody>
-        <tfoot><tr><th scope="row" colspan="2">Total score</th><td class="num"><strong>@a.score</strong></td></tr></tfoot>
+        <tfoot><tr><th scope="row" colspan="2">Total score</th><td class="num" data-label="Total score"><strong>@a.score</strong></td></tr></tfoot>
       </table>
     }
   </section>
@@ -104,6 +104,7 @@
       <div class="field">
         <label for="kind">Action</label>
         <select id="kind" name="kind">
+          <option value="">Choose an action</option>
           @for(k <- ActionKind.all) { <option value="@k.key">@k.label</option> }
         </select>
       </div>
