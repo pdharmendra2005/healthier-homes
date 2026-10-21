@@ -124,8 +124,10 @@ object RiskBand {
 }
 
 /** One line of the explanation. The points of all reasons add up to the score. */
-final case class Reason(points: Int, text: String, source: String) {
+final case class Reason(points: Int, text: String, source: String, sharedText: Option[String] = None) {
   def isUnknown: Boolean = source == Reason.Unknown
+  /** Wording safe to show outside the home page (lists, API): no health or income details. */
+  def shareableText: String = sharedText.getOrElse(text)
 }
 object Reason {
   val Unknown = "Not known - please check"
@@ -143,5 +145,5 @@ final case class RiskAssessment(
   def household: Household          = data.household
   def openAction: Option[HomeAction] = data.actions.find(_.outcome.isEmpty)
   def mainReason: String =
-    reasons.filter(_.points > 0).sortBy(-_.points).headOption.map(_.text).getOrElse("No concerns")
+    reasons.filter(_.points > 0).sortBy(-_.points).headOption.map(_.shareableText).getOrElse("No concerns")
 }

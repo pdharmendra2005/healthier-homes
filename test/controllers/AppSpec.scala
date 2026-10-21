@@ -47,7 +47,16 @@ class AppSpec extends PlaySpec with GuiceOneAppPerSuite {
       scores must not be empty
       scores mustBe scores.sorted.reverse
       all(scores) must be >= 25
-      contentAsString(res) must not include "Amina Khan"
+      val json = contentAsString(res)
+      json must not include "Amina Khan"
+      json must not include "breathing"
+      json must not include "low income"
+    }
+
+    "keep health and income details off the staff list" in {
+      val html = contentAsString(get("/"))
+      html must not include "breathing"
+      html must not include "low income"
     }
   }
 
@@ -56,6 +65,13 @@ class AppSpec extends PlaySpec with GuiceOneAppPerSuite {
       val res = post("/report", "homeId" -> "X999", "issue" -> "mould", "severity" -> "2", "description" -> "")
       status(res) mustBe BAD_REQUEST
       contentAsString(res) must include("Enter your home reference")
+    }
+
+    "explain in plain words when no problem is chosen" in {
+      val res = post("/report", "homeId" -> "P01", "severity" -> "2", "description" -> "")
+      status(res) mustBe BAD_REQUEST
+      contentAsString(res) must include("Choose what the problem is")
+      contentAsString(res) must not include "error.required"
     }
 
     "accept a report with consent and show it to staff" in {
@@ -84,7 +100,7 @@ class AppSpec extends PlaySpec with GuiceOneAppPerSuite {
     }
 
     "refuse an action with no type chosen" in {
-      val res = post("/homes/P04/actions", "kind" -> "", "notes" -> "")
+      val res = post("/homes/P04/actions", "notes" -> "")
       status(res) mustBe SEE_OTHER
       flash(res).get("error") mustBe Some("Choose an action")
     }

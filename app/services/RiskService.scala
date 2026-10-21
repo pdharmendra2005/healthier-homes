@@ -90,7 +90,8 @@ class RiskService {
     val factor   = 1.0 + factors.map(_._1).sum
     val uncapped = math.round(base * factor).toInt
     val household = Option.when(base > 0 && factors.nonEmpty)(Reason(uncapped - base,
-      f"Household more at risk to health: ${factors.map(_._2).mkString(", ")} (x$factor%.2f)", "Tenancy records"))
+      f"Household more at risk to health: ${factors.map(_._2).mkString(", ")} (x$factor%.2f)", "Tenancy records",
+      Some(f"Household more at risk to health (x$factor%.2f) - details on the home page")))
 
     val score   = math.min(100, uncapped)
     val cap     = Option.when(uncapped > 100)(Reason(100 - uncapped, "Score capped at 100", "Scoring rule"))
